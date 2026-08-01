@@ -4,12 +4,6 @@
 
 A split-screen authentication interface with a dramatic dark-to-light visual contrast. The left side features an animated typing headline and a reactive neon glow, while the right side hosts clean, minimal Sign In and Sign Up forms. Everything runs from a single HTML file with no build step or external dependencies beyond a font and icon library.
 
-# Preview
-
-```md
-![Preview](./cover.png)
-```
-
 # Features
 
 - **Split-panel layout** — A dark promotional left panel and a bright white right panel create strong visual separation between branding and functionality

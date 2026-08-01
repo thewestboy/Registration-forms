@@ -4,12 +4,6 @@
 
 A polished, glassmorphism-style authentication card that supports both Log In and Sign Up flows. It features real-time validation, a four-segment password strength meter, animated status icons, and a full dark mode that responds to the user's system preference. The entire component lives in a single HTML file with no external dependencies.
 
-# Preview
-
-```md
-![Preview](./cover.png)
-```
-
 # Features
 
 - **Dual-form layout** — Switch between Log In and Sign Up using a segmented pill control; the active panel fades in with a staggered reveal animation

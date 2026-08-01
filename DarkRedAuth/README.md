@@ -4,12 +4,6 @@
 
 A dark, immersive dual-form authentication component that handles both Sign In and Sign Up flows in a single file. Built with a moody red-and-black aesthetic, it features real-time password strength analysis, live validation, and full keyboard accessibility without relying on any external frameworks or build tools.
 
-# Preview
-
-```md
-![Preview](./cover.png)
-```
-
 # Features
 
 - **Dual-form layout** — Sign In and Sign Up forms share the same container with animated transitions between them
