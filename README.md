@@ -121,4 +121,4 @@ This collection is meant to grow. If you would like to contribute, here are a fe
 
 # License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License — see [LICENSE](./LISENSE) for details.
