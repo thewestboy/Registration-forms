@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Enterprise Auth</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter', sans-serif;
+}
+
+html, body{
+    height:100%;
+}
+
+body{
+    height:100vh;
+    height:100dvh;
+    background:#050508;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+}
+
+.container{
+    width:90vw;
+    height:90vh;
+    height:90dvh;
+    background:#0b0b0f;
+    display:flex;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+
+.left{
+    flex:6;
+    background:linear-gradient(135deg,#0b0b0f,#111122);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:40px;
+}
+
+.neon-cursor{
+    position:absolute;
+    width:250px;
+    height:250px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(79,124,255,0.25), transparent 60%);
+    pointer-events:none;
+    transform:translate(-50%, -50%) scale(1);
+    filter:blur(50px);
+    opacity:0;
+    transition:opacity 0.5s ease, transform 0.15s ease;
+}
+
+.typing-wrapper{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.typing-title{
+    font-size: clamp(36px, 4vw, 64px);
+    font-weight:600;
+    letter-spacing:1px;
+    color:#4f7cff;
+    text-align:center;
+    user-select:none;
+    border-right:3px solid #4f7cff;
+    padding-right:10px;
+    opacity:1;
+    transform:translateY(0);
+}
+
+.subtitle{
+    margin-top:20px;
+    font-size:18px;
+    font-weight:400;
+    color:#4f7cff;
+    text-align:center;
+}
+
+.right{
+    flex:4;
+    background:#ffffff;
+    color:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    direction: ltr;
+    padding: 50px 10px;
+}
+
+.login-box{
+    width:80%;
+    max-width:360px;
+}
+
+.login-box h2{
+    font-size:24px;
+    margin-bottom:8px;
+}
+
+.login-box span{
+    font-size:14px;
+    color:#666;
+}
+
+.input-group{
+    margin-top:20px;
+}
+
+.input-group input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:8px;
+    border:1px solid #ddd;
+    outline:none;
+    font-size:14px;
+    transition:0.2s;
+    background: #fafafa;
+}
+
+.input-group input:focus{
+    border-color:#4f7cff;
+    box-shadow:0 0 0 2px #4f7cff;
+    background: white;
+    transform: translateY(-2px);
+}
+
+/* Validation feedback: border color only, no layout/text changes */
+.input-group input.invalid{
+    border-color:#ff4d4f;
+}
+
+.input-group input.invalid:focus{
+    border-color:#ff4d4f;
+    box-shadow:0 0 0 2px #ff4d4f;
+}
+
+/* Wrapper used only for password fields so the show/hide icon can be
+   absolutely positioned without altering the existing input-group spacing */
+.password-wrapper{
+    position:relative;
+}
+
+.password-wrapper input{
+    padding-right:40px;
+}
+
+.toggle-password{
+    position:absolute;
+    right:14px;
+    top:calc(50% + 5px);
+    transform:translateY(-50%);
+    font-size:14px;
+    color:#999;
+    cursor:pointer;
+    user-select:none;
+    transition:color 0.2s;
+}
+
+.toggle-password:hover{
+    color:#4f7cff;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:20px;
+    border:none;
+    border-radius:8px;
+    background: linear-gradient(135deg, #436ef0, #3e67e6);
+    color:#fff;
+    font-weight:600;
+    letter-spacing: 0.5px;
+    cursor:pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+button:hover{
+    background: linear-gradient(135deg, #5c87ff, #4a72f0);
+    transform: translateY(-2px);
+    box-shadow: 0 0px 14px rgba(118, 152, 255, 0.175);
+}
+
+button:active{
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(79, 124, 255, 0.2);
+}
+
+button::after{
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+}
+
+@keyframes ripple {
+    0% { transform: scale(0, 0) translate(-50%, -50%); opacity: 0.5; }
+    100% { transform: scale(40, 40) translate(-50%, -50%); opacity: 0; }
+}
+
+button:focus:not(:active)::after{
+    animation: ripple 1s ease-out;
+}
+
+.divider{
+    text-align:center;
+    margin:18px 0;
+    font-size:12px;
+    color:#999;
+    position:relative;
+}
+
+.divider::before,
+.divider::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:50px;
+    height:1px;
+    background:#eee;
+}
+
+.divider::before{left:0;}
+.divider::after{right:0;}
+
+.social{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+}
+
+.social i{
+    font-size:18px;
+    color:#555;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.social i:hover{
+    color:#4f7cff;
+}
+
+.footer{
+    margin-top:20px;
+    text-align:center;
+    font-size:13px;
+}
+
+.footer a{
+    color:#4f7cff;
+    text-decoration:none;
+    cursor:pointer;
+}
+
+.error-message{
+    display:none; /* no visible error text per design requirements */
+}
+
+/* ===== TOGGLE BUTTONS ===== */
+.form-toggle {
+    display: flex;
+    padding: 6px;
+    background: #f0f2f5;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    border-radius: 12px;
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.5px;
+    margin: 0;
+    width: auto;
+}
+
+.toggle-btn.active {
+    color: #4f7cff;
+    background: white;
+    box-shadow: 0 4px 12px rgba(108, 144, 255, 0.138);
+    transform: scale(1.02);
+}
+
+.toggle-btn:not(.active):hover {
+    color: #4f7cff;
+    background: rgba(79, 124, 255, 0.08);
+    transform: translateY(-1px);
+}
+
+.toggle-btn:active {
+    transform: scale(0.98);
+}
+
+.toggle-btn.active::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 12px;
+    background: radial-gradient(circle at center, rgba(79, 124, 255, 0.2), transparent 70%);
+    z-index: -1;
+    animation: pulse 2s infinite;
+}
+
+.toggle-slider {
+    position: absolute;
+    height: calc(100% - 12px);
+    width: calc(50% - 6px);
+    background: white;
+    border-radius: 12px;
+    top: 6px;
+    left: 6px;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 10px rgba(79, 124, 255, 0.2);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.toggle-slider.register-active {
+    transform: translateX(calc(100% + 0px));
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+#loginForm, #registerForm {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    animation: fadeSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#loginForm.hidden, #registerForm.hidden {
+    display: none;
+}
+
+@keyframes fadeSlide {
+    0% { opacity: 0; transform: translateX(10px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+/* First / Last name side-by-side row (kept stacked on desktop look,
+   this simply groups the two inputs so the responsive rule below
+   can lay them out horizontally without any other visual change) */
+.name-row{
+    display:flex;
+    gap:12px;
+}
+
+.name-row input{
+    flex:1;
+    min-width:0;
+}
+
+/* ===== Responsive: eliminate vertical scrolling under 900px ===== */
+@media(max-width:900px){
+    body{
+        align-items:stretch;
+        justify-content:stretch;
+    }
+
+    .container{
+        flex-direction:column;
+        width:100vw;
+        height:100vh;
+        height:100dvh;
+        border-radius:0;
+    }
+
+    .left{
+        flex:0 0 auto;
+        padding:clamp(14px,3vh,28px) 20px;
+        min-height:unset;
+        max-height:26vh;
+    }
+
+    .typing-title{
+        font-size: clamp(20px, 5.5vw, 30px);
+        border-right-width:2px;
+        padding-right:6px;
+    }
+
+    .subtitle{
+        margin-top:10px;
+        font-size:clamp(12px,2.6vw,15px);
+    }
+
+    .right{
+        flex:1 1 auto;
+        padding:clamp(14px,2.5vh,24px) 16px;
+        overflow-y:auto;
+        min-height:0;
+    }
+
+    .login-box{
+        width:100%;
+        max-width:420px;
+    }
+
+    .login-box h2{
+        font-size:clamp(18px,3.5vw,22px);
+        margin-bottom:4px;
+    }
+
+    .login-box span{
+        font-size:clamp(12px,2.5vw,13px);
+    }
+
+    .form-toggle{
+        margin-bottom:clamp(12px,2.5vh,20px);
+        padding:5px;
+    }
+
+    .toggle-btn{
+        padding:clamp(9px,1.8vh,12px) 12px;
+        font-size:14px;
+    }
+
+    .input-group{
+        margin-top:clamp(10px,2vh,16px);
+    }
+
+    .input-group input{
+        padding:clamp(9px,1.6vh,11px) 12px;
+        margin-top:clamp(7px,1.4vh,10px);
+        font-size:14px;
+    }
+
+    .name-row{
+        margin-top:clamp(7px,1.4vh,10px);
+    }
+
+    .name-row input{
+        margin-top:0;
+    }
+
+    button{
+        padding:clamp(10px,1.8vh,12px);
+        margin-top:clamp(12px,2.2vh,18px);
+    }
+
+    .divider{
+        margin:clamp(10px,2vh,16px) 0;
+    }
+
+    .footer{
+        margin-top:clamp(10px,2vh,16px);
+    }
+}
+
+@media(max-width:480px){
+    .left{
+        max-height:20vh;
+    }
+
+    .typing-title{
+        font-size:clamp(18px,6vw,24px);
+    }
+
+    .name-row{
+        gap:8px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="left">
+        <div class="neon-cursor" id="cursorGlow"></div>
+        <div class="typing-wrapper">
+            <h1 id="typingTitle" class="typing-title"></h1>
+            <div class="subtitle" id="subtitleText"></div>
+        </div>
+    </div>
+
+    <div class="right">
+        <div class="login-box" id="formContainer">
+            <div class="form-toggle">
+                <div class="toggle-slider" id="toggleSlider"></div>
+                <button type="button" class="toggle-btn active" id="loginToggle">Sign In</button>
+                <button type="button" class="toggle-btn" id="registerToggle">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h2>Welcome back</h2>
+                <span>Please sign in to continue</span>
+                <div class="input-group">
+                    <input type="email" placeholder="Email" id="loginEmail" autocomplete="email">
+                    <div class="password-wrapper">
+                        <input type="password" placeholder="Password" id="loginPassword" autocomplete="current-password">
+                        <i class="fa-solid fa-eye toggle-password" data-target="loginPassword"></i>
+                    </div>
+                </div>
+                <div id="loginError" class="error-message"></div>
+                <button type="button" onclick="handleLogin()">Sign In</button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" style="display:none;">
+                <h2>Create account</h2>
+                <span>Please fill in your details</span>
+                <div class="input-group">
+                    <div class="name-row">
+                        <input type="text" placeholder="First Name" id="firstName" autocomplete="given-name">
+                        <input type="text" placeholder="Last Name" id="lastName" autocomplete="family-name">
+                    </div>
+                    <input type="email" placeholder="Email" id="registerEmail" autocomplete="email">
+                    <div class="password-wrapper">
+                        <input type="password" placeholder="Password" id="registerPassword" autocomplete="new-password">
+                        <i class="fa-solid fa-eye toggle-password" data-target="registerPassword"></i>
+                    </div>
+                    <div class="password-wrapper">
+                        <input type="password" placeholder="Confirm Password" id="confirmPassword" autocomplete="new-password">
+                        <i class="fa-solid fa-eye toggle-password" data-target="confirmPassword"></i>
+                    </div>
+                </div>
+                <div id="registerError" class="error-message"></div>
+                <button type="button" onclick="handleRegister()">Sign Up</button>
+            </div>
+
+            <div class="divider">OR CONTINUE WITH</div>
+            <div class="social">
+                <i class="fab fa-google"></i>
+                <i class="fab fa-github"></i>
+                <i class="fab fa-apple"></i>
+            </div>
+            <div class="footer" id="footerText">
+                Don't have an account? <a href="#" id="switchToRegister">Sign up</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== Typing Effect =====
+const text = "Hi, Hello World";
+const typingElement = document.getElementById("typingTitle");
+const subtitle = document.getElementById("subtitleText");
+let index = 0;
+
+function typeLetter(){
+    if(index < text.length){
+        typingElement.textContent += text.charAt(index);
+        index++;
+        setTimeout(typeLetter, 50);
+    }
+}
+setTimeout(typeLetter, 500);
+
+// ===== Neon glow movement =====
+const leftSection = document.querySelector(".left");
+const glow = document.getElementById("cursorGlow");
+
+leftSection.addEventListener("mouseenter", () => { glow.style.opacity = 1; });
+leftSection.addEventListener("mouseleave", () => { glow.style.opacity = 0; });
+leftSection.addEventListener("mousemove", (e) => {
+    const rect = leftSection.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    glow.style.left = x + "px";
+    glow.style.top = y + "px";
+
+    const distX = Math.abs(x - centerX) / centerX;
+    const distY = Math.abs(y - centerY) / centerY;
+    const scale = 1 + (distX + distY) / 6;
+    glow.style.transform = `translate(-50%, -50%) scale(${scale})`;
+});
+
+// ===== Form Toggle Logic =====
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const loginToggle = document.getElementById('loginToggle');
+const registerToggle = document.getElementById('registerToggle');
+const footerText = document.getElementById('footerText');
+const toggleSlider = document.getElementById('toggleSlider');
+
+function showLoginForm(e) {
+    if (e) e.preventDefault();
+    loginForm.style.display = 'block';
+    registerForm.style.display = 'none';
+    loginToggle.classList.add('active');
+    registerToggle.classList.remove('active');
+    toggleSlider.classList.remove('register-active');
+    footerText.innerHTML = `Don't have an account? <a href="#" id="switchToRegister">Sign up</a>`;
+    document.getElementById('switchToRegister').addEventListener('click', function(e) {
+        e.preventDefault();
+        showRegisterForm(e);
+    });
+}
+
+function showRegisterForm(e) {
+    if (e) e.preventDefault();
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'block';
+    registerToggle.classList.add('active');
+    loginToggle.classList.remove('active');
+    toggleSlider.classList.add('register-active');
+    footerText.innerHTML = `Already have an account? <a href="#" id="switchToLogin">Sign in</a>`;
+    document.getElementById('switchToLogin').addEventListener('click', function(e) {
+        e.preventDefault();
+        showLoginForm(e);
+    });
+}
+
+loginToggle.addEventListener('click', showLoginForm);
+registerToggle.addEventListener('click', showRegisterForm);
+
+document.getElementById('switchToRegister').addEventListener('click', function(e) {
+    e.preventDefault();
+    showRegisterForm(e);
+});
+
+// ===== Validation helpers (visual feedback = red border only) =====
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// letters (incl. common accented ranges), spaces, hyphens, apostrophes
+const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,}$/;
+
+function setFieldValidity(el, isValid) {
+    if (!el) return;
+    el.classList.toggle('invalid', !isValid);
+}
+
+function getPasswordStrength(password) {
+    // Internal-only scoring, never surfaced in the UI.
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+
+    if (score <= 2) return 'weak';
+    if (score <= 3) return 'medium';
+    return 'strong';
+}
+
+function isPasswordAcceptable(password) {
+    // Minimum bar: 8+ chars, at least one letter and one number.
+    return password.length >= 8 && /[A-Za-z]/.test(password) && /[0-9]/.test(password);
+}
+
+// ===== Password show/hide toggle =====
+document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', () => {
+        const targetId = icon.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        if (!input) return;
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+        icon.classList.toggle('fa-eye', !isHidden);
+        icon.classList.toggle('fa-eye-slash', isHidden);
+    });
+});
+
+// ===== Live validation bindings =====
+function bindLiveValidation(id, validatorFn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const check = () => setFieldValidity(el, validatorFn(el.value));
+    el.addEventListener('input', check);
+    el.addEventListener('blur', check);
+}
+
+bindLiveValidation('firstName', v => v.trim() === '' || nameRegex.test(v.trim()));
+bindLiveValidation('lastName', v => v.trim() === '' || nameRegex.test(v.trim()));
+bindLiveValidation('registerEmail', v => v.trim() === '' || emailRegex.test(v.trim()));
+bindLiveValidation('loginEmail', v => v.trim() === '' || emailRegex.test(v.trim()));
+bindLiveValidation('registerPassword', v => v === '' || isPasswordAcceptable(v));
+
+document.getElementById('confirmPassword').addEventListener('input', checkConfirmMatch);
+document.getElementById('confirmPassword').addEventListener('blur', checkConfirmMatch);
+document.getElementById('registerPassword').addEventListener('input', checkConfirmMatch);
+
+function checkConfirmMatch() {
+    const pass = document.getElementById('registerPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    const confirmEl = document.getElementById('confirmPassword');
+    setFieldValidity(confirmEl, confirm === '' || confirm === pass);
+}
+
+// ===== Register Validation & Submit =====
+function handleRegister() {
+    const firstNameEl = document.getElementById('firstName');
+    const lastNameEl = document.getElementById('lastName');
+    const emailEl = document.getElementById('registerEmail');
+    const passwordEl = document.getElementById('registerPassword');
+    const confirmEl = document.getElementById('confirmPassword');
+
+    const firstName = firstNameEl.value.trim();
+    const lastName = lastNameEl.value.trim();
+    const email = emailEl.value.trim();
+    const password = passwordEl.value;
+    const confirmPassword = confirmEl.value;
+
+    const firstNameValid = nameRegex.test(firstName);
+    const lastNameValid = nameRegex.test(lastName);
+    const emailValid = emailRegex.test(email);
+    const passwordValid = isPasswordAcceptable(password);
+    const confirmValid = confirmPassword !== '' && confirmPassword === password;
+
+    setFieldValidity(firstNameEl, firstNameValid);
+    setFieldValidity(lastNameEl, lastNameValid);
+    setFieldValidity(emailEl, emailValid);
+    setFieldValidity(passwordEl, passwordValid);
+    setFieldValidity(confirmEl, confirmValid);
+
+    if (!firstNameValid || !lastNameValid || !emailValid || !passwordValid || !confirmValid) {
+        return; // blocked silently, red borders already applied
+    }
+
+    // Internal-only strength read, not shown to the user.
+    const strength = getPasswordStrength(password);
+
+    // Validation passed — hook up real submission logic here.
+    console.log('Registration payload ready', { firstName, lastName, email, strength });
+}
+
+// ===== Login Handler =====
+function handleLogin() {
+    const emailEl = document.getElementById('loginEmail');
+    const passwordEl = document.getElementById('loginPassword');
+
+    const email = emailEl.value.trim();
+    const password = passwordEl.value;
+
+    const emailValid = emailRegex.test(email);
+    const passwordValid = password.trim() !== '';
+
+    setFieldValidity(emailEl, emailValid);
+    setFieldValidity(passwordEl, passwordValid);
+
+    if (!emailValid || !passwordValid) {
+        return; // blocked silently, red borders already applied
+    }
+
+    console.log('Login payload ready', { email });
+}
+
+// ===== Ripple effect on buttons =====
+document.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click', function(e) {
+        let x = e.clientX - e.target.getBoundingClientRect().left;
+        let y = e.clientY - e.target.getBoundingClientRect().top;
+
+        let ripple = document.createElement('span');
+        ripple.style.position = 'absolute';
+        ripple.style.width = '0px';
+        ripple.style.height = '0px';
+        ripple.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+        ripple.style.borderRadius = '50%';
+        ripple.style.transform = 'translate(-50%, -50%)';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.style.transition = 'width 0.6s, height 0.6s, opacity 0.6s';
+        ripple.style.pointerEvents = 'none';
+
+        this.appendChild(ripple);
+
+        setTimeout(() => {
+            ripple.style.width = '200px';
+            ripple.style.height = '200px';
+            ripple.style.opacity = '0';
+        }, 10);
+
+        setTimeout(() => { ripple.remove(); }, 600);
+    });
+});
+</script>
+
+</body>
+</html>
